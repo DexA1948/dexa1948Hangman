@@ -26,6 +26,10 @@
         padding: 0;
     }
     
+    body {
+        padding: 0px 1px;
+    }
+    
     .container-fluid {
         padding: 0;
         margin: 0;
@@ -43,7 +47,7 @@
     }
     
     #game-head {
-        height: 50px;
+        /* height: 50px; */
         display: flex;
         justify-content: center;
         align-items: center;
@@ -83,9 +87,9 @@
     }
     
     #mainmid {
-        height: 350px;
-        margin: 0px;
-        padding: 0px;
+        /* height: 350px; */
+        /* margin: 0px;
+        padding: 0px; */
         /* background-color: gray; */
     }
     
@@ -126,7 +130,7 @@
     }
     
     .gameplay {
-        height: 300px;
+        /* height: 300px; */
         padding: 0px;
         margin: 0px;
     }
@@ -169,7 +173,12 @@
         margin: 0px;
     }
     
-    .word-holder {
+    #word-holder-row {
+        margin: 0px;
+        padding: 0px;
+    }
+    
+    #word-holder {
         height: 50px;
         padding: 0px;
         margin: 0px;
@@ -178,7 +187,7 @@
         justify-content: center;
     }
     
-    .word-holder>input {
+    #word-holder>input {
         font-family: 'Indie Flower', cursive;
         font-size: x-large;
         font-weight: bold;
@@ -196,7 +205,8 @@
     
     #qwertyuiop,
     #asdfghjkl,
-    #zxcvbnm {
+    #zxcvbnm,
+    #res-hint {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -217,9 +227,9 @@
     }
     
     .funcbutton {
-        width: 70px;
+        width: 100px;
         padding: 6px 5px 6px 5px;
-        margin: 3px 10px;
+        margin: 3px 20px;
         border: none;
         background-color: rgb(116, 143, 231);
         border-radius: 20px;
@@ -259,7 +269,7 @@
 
             <div class="row gameplay">
 
-                <div class="col-10 icondisp">
+                <div class="col-9 icondisp">
                     <!-- display icons in form of hanging man -->
 
                     <div class="row iconrow" id="icn-1st-row">
@@ -359,13 +369,14 @@
                 </div>
 
 
-                <div class="col-2 statdisp">
+                <div class="col-3 statdisp">
                     <!-- display gamestats -->
+
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-12 word-holder">
+            <div class="row" id="word-holder-row">
+                <div class="col-12" id="word-holder">
 
                 </div>
             </div>
@@ -409,11 +420,11 @@
                 <button class="chrbutton" value="m" onclick="checkandplace(value)">M</button>
             </div>
 
-            <div class="col-12 p-1" id="res-hint-inp-undo">
-                <button class="funcbutton" id="restart" title="Restart" onclick="new_game()"><i class="fas fa-undo"></i></button>
-                <button class="funcbutton" id="hint" title="Hint"><i class="far fa-lightbulb"></i></button>
-                <button class="funcbutton" id="inputguess" title="Give Input"><i class="far fa-check-circle"></i></button>
-                <button class="funcbutton" id="undo" title="Undo"><i class="fas fa-backspace"></i></button>
+            <div class="col-12 p-1" id="res-hint">
+                <button class="funcbutton" id="restart" title="Restart" onclick="startgame()"><i class="fas fa-undo"></i></button>
+                <button class="funcbutton" id="hint" title="Hint" onclick="hint()"><i class="far fa-lightbulb"></i></button>
+                <!-- <button class="funcbutton" id="inputguess" title="Give Input"><i class="far fa-check-circle"></i></button>
+                <button class="funcbutton" id="undo" title="Undo"><i class="fas fa-backspace"></i></button> -->
             </div>
         </div>
 
@@ -425,116 +436,193 @@
 </body>
 
 <script>
-    class HangMan {
-        constructor() {
-            this.hm_hat = document.getElementById("icn-2nd-row").getElementsByClassName("icn-3rd-col")[0];
-            this.hm_head = document.getElementById("icn-3rd-row").getElementsByClassName("icn-3rd-col")[0];
-            this.hm_body = document.getElementById("icn-4th-row").getElementsByClassName("icn-3rd-col")[0];
-            this.hm_left_hand = document.getElementById("icn-4th-row").getElementsByClassName("icn-2nd-col")[0];
-            this.hm_right_hand = document.getElementById("icn-4th-row").getElementsByClassName("icn-4th-col")[0];
-            this.hm_body2 = document.getElementById("icn-5th-row").getElementsByClassName("icn-3rd-col")[0];
-            this.hm_foot = document.getElementById("icn-6th-row").getElementsByClassName("icn-3rd-col")[0];
-            this.gameover = document.getElementById("icn-3rd-row").getElementsByClassName("icn-4th-col")[0];
+    //getting appropriate cells in table for hangmanbody
+    hm_hat = document.getElementById("icn-2nd-row").getElementsByClassName("icn-3rd-col")[0];
+    hm_head = document.getElementById("icn-3rd-row").getElementsByClassName("icn-3rd-col")[0];
+    hm_body = document.getElementById("icn-4th-row").getElementsByClassName("icn-3rd-col")[0];
+    hm_left_hand = document.getElementById("icn-4th-row").getElementsByClassName("icn-2nd-col")[0];
+    hm_right_hand = document.getElementById("icn-4th-row").getElementsByClassName("icn-4th-col")[0];
+    hm_body2 = document.getElementById("icn-5th-row").getElementsByClassName("icn-3rd-col")[0];
+    hm_foot = document.getElementById("icn-6th-row").getElementsByClassName("icn-3rd-col")[0];
+    gameover = document.getElementById("icn-3rd-row").getElementsByClassName("icn-4th-col")[0];
 
-            this.hm_hat.innerHTML = "";
-            this.hm_head.innerHTML = "";
-            this.hm_body.innerHTML = "";
-            this.hm_left_hand.innerHTML = "";
-            this.hm_right_hand.innerHTML = "";
-            this.hm_body2.innerHTML = "";
-            this.hm_foot.innerHTML = "";
-            this.gameover.innerHTML = "";
-        }
+    //place where the words are displayed
+    wordholder = document.getElementById("word-holder");
 
-        generate(wrongs) {
-            switch (wrongs) {
-                case 0:
-                    this.hm_hat.innerHTML = "<i class='fab fa-redhat'></i>";
-                    break;
+    //count no of correct and wrong presses
+    wrongcount = 0;
+    correctcount = 0;
 
-                case 1:
-                    this.hm_head.innerHTML = "<i class='far fa-meh-rolling-eyes'></i>";
-                    break;
+    //array of words to extract guesses from
+    const wordarr = new Array("apple", "banana", "orange", "kiwi", "guava", "mango", "avocado", "peach", "pear", "plum", "papaya", "pomegranate", "watermelom");
+    const wordarrlen = wordarr.length;
 
-                case 2:
-                    this.hm_body.innerHTML = "<i class='far fa-square'></i>";
-                    break;
+    //freeze flag to freeze the button presses
+    freeze = false;
 
-                case 3:
-                    this.hm_left_hand.innerHTML = "<i class='far fa-hand-point-left'></i>";
-                    break;
+    //
+    //call startgame to start a new game
+    function startgame() {
+        console.clear();
 
-                case 4:
-                    this.hm_body2.innerHTML = "<i class='far fa-square'></i>";
-                    break;
+        //unfreeze buttons
+        freeze = false;
 
-                case 5:
-                    this.hm_foot.innerHTML = "<i class='fas fa-shoe-prints fa-rotate-90'></i>";
-                    break;
+        //clear the body of the man
+        hm_hat.innerHTML = "";
+        hm_head.innerHTML = "";
+        hm_body.innerHTML = "";
+        hm_left_hand.innerHTML = "";
+        hm_right_hand.innerHTML = "";
+        hm_body2.innerHTML = "";
+        hm_foot.innerHTML = "";
+        gameover.innerHTML = "";
 
-                case 6:
-                    this.hm_right_hand.innerHTML = "<i class='far fa-thumbs-down'></i>";
-                    this.gameover.innerHTML = "Game Over";
-                    break;
-            }
-
-        }
-
-    }
-
-    function new_game() {
-        const wordarr = new Array("apple", "banana", "orange", "kiwi", "guava", "mango", "avocado", "peach", "pear", "plum", "papaya", "pomegranate", "watermelom");
-        const wordarrlen = wordarr.length;
-
-        player = new HangMan();
-
+        //initialize wrongcount and correctcount
         wrongcount = 0;
-        wincount = 0;
+        correctcount = 0;
 
-        ranindex = Math.floor(Math.random() * wordarrlen);
-        ranword = wordarr[ranindex];
-        ranwordlen = ranword.length;
+        //choose a random word from array
+        ranindex = Math.floor(Math.random() * wordarrlen); //index of word from array
+        ranword = wordarr[ranindex]; //choose word using index
+        ranwordlen = ranword.length; //find length of the ranword
+        console.log("The random word is: " + ranword); //display random word in console for hackers
 
-        wordholder = document.getElementsByClassName("word-holder")[0];
-
-        wordholder.innerHTML = "";
-
+        //initialize spaces using _ for the letters in ".word-holder" column
+        wordholder.innerHTML = ""; //clear existing elements
+        input_area_array = new Array();
         for (i = 0; i < ranwordlen; i++) {
             placeholder = document.createElement("input");
             placeholder.type = "text";
+            placeholder.value = "_"; //add a readonly input with value _
+            placeholder.name = ranword[i]; //use name to identify the letter, name = "letter to disp (if matched) in this input"
             placeholder.readOnly = true;
-            placeholder.name = ranword[i];
-            placeholder.value = "_";
-            placeholder.className = "rangenword";
             wordholder.appendChild(placeholder);
+            input_area_array[i] = placeholder;
+        } //the css to input section is applied using #wordholder>input
+    }
+
+    //display body parts according to wrongcount
+    //0:hat
+    //1:head
+    //2:bodyupper
+    //3:lefthand
+    //4:body2
+    //5:foot
+    //6:righthand and gameover(7 total wrong) 
+    function generate(wrongno) {
+        switch (wrongno) {
+            case 0:
+                hm_hat.innerHTML = "<i class='fab fa-redhat'></i>";
+                break;
+
+            case 1:
+                hm_head.innerHTML = "<i class='far fa-meh-rolling-eyes'></i>";
+                break;
+
+            case 2:
+                hm_body.innerHTML = "<i class='far fa-square'></i>";
+                break;
+
+            case 3:
+                hm_left_hand.innerHTML = "<i class='far fa-hand-point-left'></i>";
+                break;
+
+            case 4:
+                hm_body2.innerHTML = "<i class='far fa-square'></i>";
+                break;
+
+            case 5:
+                hm_foot.innerHTML = "<i class='fas fa-shoe-prints fa-rotate-90'></i>";
+                break;
+
+            case 6:
+                hm_right_hand.innerHTML = "<i class='far fa-thumbs-down'></i>";
+                lost();
+                break;
+
+            default:
+                freeze = true;
         }
     }
 
-    new_game();
-    console.log("The random word is: " + ranword);
+    //function win and lost
+    function win() {
+        if (correctcount == ranwordlen) {
+            window.alert("!You won!\nStart New Game")
+            freeze = true;
+            return true;
+        }
+    }
 
+    function lost() {
+        if (wrongcount >= 6) {
+            window.alert("!You lost!\nStart New Game")
+            freeze = true;
+            return true;
+        }
+    }
 
+    //this function is called on chrbutton presses
+    //checks if the value from button is in ranword: ranword.includes(btnvalue)
+    //if not then displays a body part and increases wrong count
+    //if yes then searches for positions with name==bthvalue and..
+    //..places corresponding correct guess letter in them and increases correctcount
     function checkandplace(btnvalue) {
-        console.log(btnvalue);
+        if (!freeze) {
+            console.log("The button pressed is: " + btnvalue);
 
-        if (ranword.includes(btnvalue)) {
+            if (ranword.includes(btnvalue)) {
 
-            for (i = 0; i < ranwordlen; i++) {
-                ranlet = wordholder.getElementsByClassName("rangenword")[i];
-                if (ranlet.name == btnvalue) {
-                    ranlet.value = btnvalue;
-                    wincount++;
-                    if (wincount == ranwordlen) {
-                        player.gameover.innerHTML = "You won";
-                        break;
+                //input_area_array = wordholder.getElementsByTagName("input")
+
+                //loop through names of the <input name="."> elements and check if it matches value of button which pressed
+                for (i = 0; i < ranwordlen; i++) {
+
+                    input_elem = input_area_array[i]; //ith input element
+
+                    if (input_elem.name == btnvalue) {
+
+                        input_elem.value = btnvalue;
+
+                        //increase correct count number of times it matches
+                        //if all match then display game is won
+                        correctcount++;
+
+                        //check if win
+                        if (win()) {
+                            break;
+                        }
                     }
                 }
+
+                ranword = ranword.replaceAll(btnvalue, "*");
+            } else {
+                generate(wrongcount);
+                wrongcount++;
             }
         } else {
-            player.generate(wrongcount);
-            wrongcount++;
+            window.alert("Start New Game");
         }
     }
+
+    //give a random hint
+    //randomly generates a index between 0 and ranwordlen
+    //selects the input area according to index and puts value=name of that input field
+    function hint() {
+        if (!freeze && correctcount < 2) {
+            ranindex = Math.floor(Math.random() * ranwordlen); //random index: 0 to ranwordlen
+            input_area_array[ranindex].value = input_area_array[ranindex].name; //value=name for ranindex
+            ranword = ranword.replaceAll(input_area_array[ranindex].name, '*'); //replace hinted word with *
+            correctcount++; //increase correct count
+        } else if (!freeze && correctcount >= 2) {
+            window.alert("More than two hint isn't available"); //if game hasn't ended and more than one letters are visible
+        } else {
+            window.alert("Start New Game"); //if game has ended
+        }
+    }
+
+    startgame();
 </script>
 
 </html>
